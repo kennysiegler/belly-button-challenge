@@ -1,11 +1,13 @@
 url = 'https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json'
 
+
+// Load the data and run the functions meant to display the data
 d3.json(url).then(function(data) {
     
     loadData(data)
 })
 
-
+// This function loads the data into the select box and demographic data box
 function loadData(data) {
     for (let i = 0; i < data.names.length; i++ ) {
         const x = document.getElementById('selDataset')
@@ -18,18 +20,21 @@ function loadData(data) {
     }   
     loadDemographicData()
 }
-
+// This changes the graph when a new ID is selected
 function optionChanged(x) {
     
     createGraph(x)
     
 }
 
+
+// This function creates the graphs
 function createGraph(x) {
+    // Load the Data
     d3.json(url).then(function(data) {
-    
+        // Iterate through all of the ids in the data
         for (let i = 0;i < data.names.length; i++) {
-            
+            // matches each id to the one selected by the user
             if (data.names[i] == parseInt(x)) {
                 counts = []
                 ids = []
@@ -37,13 +42,13 @@ function createGraph(x) {
                 all_counts = data.samples[i].sample_values
                 all_ids = data.samples[i].otu_ids
                 all_labels = data.samples[i].otu_labels
-
+                // Gets the first 10 data points for the selected ID
                 for (j = 0; j < 10;j++) {
                     counts.push(all_counts[j])
                     ids.push(`OTU ${all_ids[j]}`)
                     labels.push(all_labels[j])
                 }
-                
+                // Sets the trace for the bar graph
                 trace1 = [
                     {
                     x: counts,
@@ -53,6 +58,7 @@ function createGraph(x) {
                     text: labels
                     }
                 ]       
+                // Sets the trace for the bubble graph
                 trace2 = [ {
                     x: data.samples[i].otu_ids,
                     y: data.samples[i].sample_values,
@@ -64,10 +70,12 @@ function createGraph(x) {
 
 
                 } ]
-
+                // This changes the data based on the ID selected
                 changeDemographicData(data.metadata[i])
             }
         }
+
+        // Make the two graphs
         Plotly.newPlot('bar', trace1)
         Plotly.newPlot('bubble', trace2)
 
@@ -76,6 +84,7 @@ function createGraph(x) {
     })
 }
 
+// Adds the parameters to the demographic data box
 function loadDemographicData(x) {
     
     let demo = document.getElementById('sample-metadata')
@@ -112,7 +121,7 @@ function loadDemographicData(x) {
 
 }
 
-
+// Changes the data in the demographic data box based on user input
 function changeDemographicData(x) {
     
     let demo = document.getElementById('sample-metadata')
